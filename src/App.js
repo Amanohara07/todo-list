@@ -1,20 +1,28 @@
 import React, { useState } from 'react';
+import './App.css';
+
 
 function App() {
   const [todos, setTodos] = useState([])
-  const [text, setText]  = useState('')
+  const [title, setTitle]  = useState('')
+  const [detail, setDetail] = useState('')
 
   const statusOptions = ['未着手', '進行中', '完了'];
+  const [inputStatus, setInputStatus] = useState(statusOptions[0]);
 
   const handleAddTodo = () => {
-    if(text.trim() === '') return
+    if(title.trim() === '') return
 
     const newTodo ={
       id: Date.now(),
-      text: text
+      title: title,
+      detail: detail,
+      status: inputStatus
     }
     setTodos([...todos, newTodo])
-    setText('')
+    setTitle('')
+    setDetail('')
+    setInputStatus(statusOptions[0])
   }
 
   const handleStatusChange = (id, newStatus) => {
@@ -29,28 +37,36 @@ function App() {
   }
 
   return (
-    <div style={{color: "#a2d7dd", padding: "20px"}}>
+    <div style={{padding: "20px"}}>
       <h1>Todo List</h1>
       <input 
-        value={text} 
-        onChange={(e) => setText(e.target.value)}
+        value={title} 
+        onChange={(e) => setTitle(e.target.value)}
         placeholder="やるべきこと"/>
+      <input
+        value={detail}
+        onChange={(e) => setDetail(e.target.value)}
+        placeholder="詳細"
+        style={{height: "100px", width: "300px"}}/>
+      <select
+        value={inputStatus}
+        onChange={(e) => setInputStatus(e.target.value)}
+      >
+        {statusOptions.map((option) => (
+        <option key={option} value={option}>{option}</option>
+        ))}
+      </select>
       <button onClick={handleAddTodo}>追加</button>
 
-      <ul style={{color: "red"}}>
+      <ul>
         {todos.map((todo) => (
-          <li key={todo.id}>
+          <li key={todo.id} className="todo-id">
             <span>{todo.id}</span>
-            <span style={{color:"black"}}> ||| </span>
-            <span>{todo.text}</span>
-            <select
-              value={todo.status}
-              onChange={(e) => (handleStatusChange(todo.id, e.target.value))}
-            >
-              {statusOptions.map((option) => (
-          <option key={option}>{option}</option>
-        ))}
-            </select>
+            <span > ||| </span>
+            <span>{todo.title}</span>
+            <br />
+            {todo.detail}
+            <p>ステータス:{todo.status}</p>
             <button onClick={() => handleDeleteTodo(todo.id)}>削除</button>
           </li>
         ))}
